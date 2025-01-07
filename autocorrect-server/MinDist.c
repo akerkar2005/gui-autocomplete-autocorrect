@@ -3,91 +3,69 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#define max(a, b) ((a) > (b) ? (a) : (b))
-#define abs(a) ((a < 0) ? (-(a)) : (a))
+// Define the keyboard layout dynamically
+#define ROWS 4
+#define COLS 24
 
-int minDistance(char *word1, char *word2) {
-    int m = strlen(word1);
-    int n = strlen(word2);
+char keyboard[ROWS][COLS] = {
+    {'1', '!', '2', '@', '3', '#', '4', '$', '5', '%', '6', '^', '7', '&', '8', '*', '9', '(', '0', ')', '-', '_', '='},
+    {'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '{', '[', '}', ']', '\\', '|'},
+    {'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', ':', '"', '\''},
+    {'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '<', '.', '>', '/', '?'}
+};
 
-    // Create a 2D array to store the edit distances
-    int **cache = (int **)malloc((m + 1) * sizeof(int *));
-    for (int i = 0; i <= m; i++) {
-        cache[i] = (int *)malloc((n + 1) * sizeof(int));
-    }
+typedef struct {
+    int x;
+    int y;
+} Position;
 
-    // Initialize the base cases for the edit distance matrix
-    for (int j = 0; j <= n; j++) {
-        cache[m][j] = n - j;
-    }
-    for (int i = 0; i <= m; i++) {
-        cache[i][n] = m - i;
-    }
-
-    /**
-     * Work bottom-up. Start from the corner of the matrix and
-     * calculate the edit distance operation changes depending
-     * on the base cases initially and working all the way up.
-     * Prioritize changes near the beginning by adding a weight
-     * factor based on the position of the characters.
-    **/
-    for (int i = m - 1; i >= 0; i--) {
-        for (int j = n - 1; j >= 0; j--) {
-            if (word1[i] == word2[j]) {
-                cache[i][j] = cache[i + 1][j + 1];
-            } else {
-                cache[i][j] = 1 + min(
-                            cache[i + 1][j] + ((i + 1) / m),          // Delete  (weight based on i)
-                            min(cache[i][j + 1] + ((j + 1) / n),      // Insert  (weight based on j)
-                                cache[i + 1][j + 1] + (max(i + 1, j + 1) / max(m, n)))  // Replace (weight based on i and j)
-                            );
+Position get_position(char ch) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (keyboard[i][j] == ch) {
+                Position pos = {j, i};
+                return pos;
             }
         }
     }
+    Position invalid = {-1, -1};
+    return invalid;
+}
 
-    // Store the result and free the memory
-    int result = cache[0][0];
-    for (int i = 0; i <= m; i++) {
-        free(cache[i]);
+int minDistance(char *word1, char *word2) {
+    int m = strlen(word1), n = strlen(word2);
+    int *prev = calloc(n + 1, sizeof(int)), *curr = calloc(n + 1, sizeof(int));
+
+    for (int j = 0; j <= n; j++)
+        prev[j] = j;
+
+    for (int i = 1; i <= m; i++) {
+        curr[0] = i;
+        for (int j = 1; j <= n; j++) {
+            if (word1[i - 1] == word2[j - 1])
+                curr[j] = prev[j - 1];
+            else
+                curr[j] = 1 + fmin(fmin(prev[j], curr[j - 1]), prev[j - 1]);
+        }
+        int *temp = prev;
+        prev = curr;
+        curr = temp;
     }
-    free(cache);
-
+    int result = prev[n];
+    free(prev);
+    free(curr);
     return result;
 }
 
+double keyboardDist(char *word1, char *word2) {
+    double dist = 0;
+    int len = fmin(strlen(word1), strlen(word2));
+    for (int i = 0; i < len; i++) {
+        Position p1 = get_position(word1[i]);
+        Position p2 = get_position(word2[i]);
+        if (p1.x == -1 || p2.x == -1) continue;
 
-/*
- * The keyboardDist function is intended to find the Euclidian Distance between
- * a given letter and the target letter given a misspelling. This method is only
- * called for words that are the exact same length as a test. 
- */
-
-double keyboardDist(char letter, char target) {
-    char kb_arr[4][24] = { {'1', '!', '2', '@', '3', '#', '4', '$', '5', '%', '6', '^', '7', '&', '8', '*', '9', '(', '0', ')', '-', '_', '=', '+'},
-                        {'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'o', 'p', '{', '[', '}', ']', '\\', '|'},
-                        {'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', ':', '"', '\''},
-                        {'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '<', '.', '>', '/', '?'}   };
-    int n = 4;
-    int m = 24;
-    double t_x, t_y, l_x, l_y = -1;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            if (kb_arr[i][j] == letter) {
-                t_y = (double) i;
-                t_x = (double) j;
-            }
-            if (kb_arr[i][j] == target) {
-                l_y = (double) i;
-                l_x = (double) j;
-            }
-        }
+        dist += sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
     }
-    if (t_x == -1 || t_y == -1 || l_x == -1 || l_y == -1)
-        return -1;
-
-    double euc_x = abs(t_x - l_x) * abs(t_x - l_x);
-    double euc_y = abs(t_y - l_y) * abs(t_y - l_y);
-    double euc_dist = sqrt(euc_x + euc_y);
-    return euc_dist;
+    return dist;
 }

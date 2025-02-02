@@ -2,10 +2,10 @@
 
 ## Beginnings Of This Project
 This project was originally made to experiment with the Trie data structure,
-where a simple python script was run, taking in a word as input. The program, before 
-taking input, would read a massive file of words that represented the entire data set 
+where a simple python script was run, taking in a word as input. The program, before
+taking input, would read a massive file of words that represented the entire data set
 of words the program would work with, exploiting the Trie data structure to instantly
-provide the top 3 recommendations to "complete" the word. ----------
+provide the top 3 recommendations to "complete" the word. \
 However, I was not satisfied with just autocompleting words. Additionally, I realized 
 my "database" of words was very limited. I migrated from using a file I found from the 
 internet to BeautifulSoup webscraping and started working on a way to implement
@@ -20,16 +20,15 @@ I am still new to Full-Stack Development, so I would appreciate it if I could le
 about ways to develop a more secure program while making sure to not sacrifice performance.
 I am not very confident in my application's security, but for future projects, I hope to 
 be more mindful during development. I tried to maintain some level of security by preventing 
-obvious DDoS attacks, limiting the number of requests per user who connects to the server. 
-I just want it to be known that, given this application, it was fueled by my curiosity of 
+obvious DDoS attacks, limiting the number of requests per user who connects to the server. \
+I just want it to be known that this application was fueled by my curiosity of 
 how autocorrections and autocompletions could be handled in the real world. Instead of a 
 project, one can regard this as more of a "research". Clearly a lot of the algorithms I 
 used for this project, such as the Levenshtein Edit Distance algorithm, were not developed 
-by me, so it is unfair to call this a project to me in some ways. I learned a few things about 
+by me, so it is unfair to call this a project from my perspective. I learned a few things about 
 Front-End Development with React + Vite as well. I will say, however, the differences between 
 React TSX and React JSX ranges from slim to none. I like TypeScript as well to a certain extent, 
-but I did not see major differences (at least from my experience while creating the Front-End 
-for this application).
+but I did not see major differences.
 
 ## Autocorrect Notes
 Autocorrect was the most frustrating part about this project. While it is easy to find the 
@@ -41,19 +40,26 @@ Algorithm to figure out how to find out what the user may be mispelling. I thoug
 major ideas:
 
 - Maintain a user-side cache for commonly misspelled words (reduce API calls)
-- Implement an algorithm that calculates, for two words, the Euclidean Keyboard Distance 
-  between each letter of both words.
+- Implement an algorithm that calculates the Euclidean Keyboard Distance 
+  between each letter given any two words.
 
-For the second bullet point, I need to still experiment. The idea came to me when 
-I tested the word "auren". The expected output is "queen, siren" for the top two recommendations. 
-My program opted for other words instead, like "pure". I started to note the pattern
-where, on a phone, we tend to "mistype"  incorrect letters, and the incorrect letters tend to 
-be adjacent or close to the letters we wanted to actually type for the correct word we were 
-thinking of. Thus, I thought of a fairly terrible solution, but it got the job done (for the 
-most part). Essentially, I made a 2D array documenting the common letters and symbols that 
-we use in a regular English keyboard and, whenever I ran the Edit Distance Algorithm, I also 
+For the second bullet point, the idea came to me when I tested the word "auren". The expected 
+output is "queen, siren" for the top two recommendations. My program opted for other words 
+instead, like "pure". I started to note the pattern where, on a phone, we tend to "mistype" 
+incorrect letters, and the incorrect letters tend to be adjacent or close to the letters we 
+wanted to actually type for the correct word we were thinking of. Thus, I thought of a pretty 
+terrible solution, but it got the job done. \ 
+
+I made a 2D array documenting the common letters and symbols that
+we use in a regular English keyboard and, whenever the Edit Distance Algorithm was called, I also 
 calculated the total Euclidean Distance between all keys given two words, putting a sizeable 
 penalty if the words were of different length. I simply calculated the Euclidean Distance of 
 each bi-letter comparison in linear time and added up all of the results, representing how 
-close the letters in proximity on an actual keyboard given the input word and any word on the 
-database (the database is limited to words of length: [length(input_word) - 2, length(input_word) + 4].
+close the letters are in proximity on a US keyboard given the input word and any word on the 
+database (the database is limited to words of length [length(input_word) - 2, 
+length(input_word) + 4] whenever a lookup is done). \
+The solution has very obvious drawbacks. I do not like the solution of making a 2D array. I might 
+look in to finding a better way to figuring out where a specific key's "coordinate value" may 
+be on the US keyboard. There is no point in acccomodating for other languages as that is far 
+beyond the scope of what I want this "research" project to entail. I will stick to English for 
+now. 

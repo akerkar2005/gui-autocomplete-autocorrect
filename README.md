@@ -1,7 +1,7 @@
 # Personal Autocorrect & Autocomplete Program
 
 ## Beginnings Of Autocorrect & Autocomplete
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project was originally made to experiment with the Trie data structure and learn python.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project was originally made to experiment with the Trie data structure and to learn python.
 I started off with a simple python script, where I took in a word as input. The program, before
 taking input, would read a massive file of words that represented the entire data set
 of words the program would work with, exploiting the Trie data structure to instantly
@@ -91,7 +91,7 @@ Structure in C++ to make the lookups faster, and imported the Dynamic Library in
 Python processor program. Other than that, there were no real issues developing this part of 
 the project. If only autocorrect were this simple...
 
-## Autocorrect & Autocomplete 
+## Autocorrect & Autocomplete Notes 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now that we established what was done for each part of this 
 project, how exactly were they implemented to work with each other? Autocomplete is always given 
 precedence. Yes, "appl" is a mispelling, but the user wasn't done typing! If a Trie lookup 

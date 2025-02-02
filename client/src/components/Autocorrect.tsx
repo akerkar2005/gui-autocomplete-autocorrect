@@ -6,11 +6,14 @@ const Autocorrect: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [caretPosition, setCaretPosition] = useState({ x: 0, y: 0 });
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [originalWord, setOriginalWord] = useState('');
-  const [currentLine, setCurrentLine] = useState(0);
-  const [currentHeight, setCurrentHeight] = useState(500);
-  const [currentWidth, setCurrentWidth] = useState(1000);
+  const [backendData, setBackendData] = useState([{}]);
+  const [currIndex, setCurrIndex] = useState(0);
+  const [auto, setAuto] = useState(0);
+  const [prevWord, setPrevWord] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const API_BASE_URL = 'http://100.80.0.51:3000';
+
 
   const MAX_SUGGESTIONS = 3; // Maximum number of suggestions
 
@@ -51,21 +54,42 @@ const Autocorrect: React.FC = () => {
   }, []);
 
   const fetchSuggestions = async (word: string) => {
+    if (word.length <= 1 || word.length > 22)
+      return;
     if (cache.current.has(word)) {
         console.log(`Cache hit for word: ${word}`);
-        setSuggestions(cache.current.get(word) || []);
+        console.log(`size of cache: ${cache.current.get(word).length}`);
+        const cacheHit = cache.current.get(word);
+        if (cacheHit.length == 1 && cacheHit[0] === word)
+            setSuggestions([]);
+        else
+            setSuggestions(cache.current.get(word) || []);
         return;
     }
 
     console.log(`Trying to fetch suggestions for word: ${word}`);
 
     try {
-      const response = await axios.post<SuggestionResponse>(
-                          'http://127.0.0.1:8000/autocorrect',
-                          { input_word: word }
-                       );
-      const fetchedSuggestions = response.data.suggestions || [];
-      setSuggestions(fetchedSuggestions);
+      const response = await fetch(`${API_BASE_URL}/api/autocorrect`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input_word: word })
+      });
+      console.log("Response from server: ", response);
+
+      if (!response.ok) 
+        throw new Error(`HTTP Error! Status: ${response.status}`);
+
+      const data = await response.json();
+      console.log("Response JSON", data);
+      const fetchedSuggestions = data.suggestions.data || [];
+      if (fetchedSuggestions.length == 1 && fetchedSuggestions[0] === word) 
+          setSuggestions([]);
+      else {
+          setSuggestions(fetchedSuggestions);
+      }
 
       // Cache the suggestions in case the word gets misspelled again
       if (fetchedSuggestions.length > 0) {
@@ -87,22 +111,24 @@ const Autocorrect: React.FC = () => {
     };
   };
 
-  const debouncedFetchSuggestions = debounce(fetchSuggestions, 100);
+  const debouncedFetchSuggestions = debounce(fetchSuggestions, 20);
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
+    setAuto(0);
     setInputText(text);
     const textarea = textareaRef.current;
 
     const { selectionStart } = textarea;
 
-    const textBeforeCaret = textarea.value.substring(0, selectionStart)
+    const textBeforeCaret = textarea.value.substring(0, selectionStart);
+    const entireText = textarea.value;
     
     const words = textBeforeCaret.split(/\s+/);
-    const lastWord = words[words.length - 1];
+    const entireWords = entireText.split(/\s+/);
+    const lastWord = entireWords[words.length - 1];
 
-    console.log("input has changed")
 
     if (lastWord && lastWord.length < 20) {
       debouncedFetchSuggestions(lastWord);
@@ -117,9 +143,13 @@ const Autocorrect: React.FC = () => {
           const { selectionStart } = textarea;
           /* get the current text in the input textarea */
           const textBeforeCaret = textarea.value.substring(0, selectionStart);
+          const entireText = textarea.value;
           
           const words = textBeforeCaret.split(/\s+/);
-          const lastWord = words[words.length - 1];
+          const entireWords = entireText.split(/\s+/);
+          const lastWord = entireWords[words.length - 1];
+          
+
           if (lastWord && lastWord.length < 20) {
             console.log("Caret Position Fetch Suggest", lastWord);
             debouncedFetchSuggestions(lastWord);
@@ -135,29 +165,60 @@ const Autocorrect: React.FC = () => {
 
   const handleSuggestionClick = (suggestion: string) => {
     const textarea = textareaRef.current;
+    if (!textarea) return;
+
     const { selectionStart } = textarea;
-    const selectionStartPos = textarea.selectionStart;
-    const selectionEndPos = textarea.selectionEnd;
 
     /* get the current text in the input textarea */
     const textBeforeCaret = textarea.value.substring(0, selectionStart);
     const words = textBeforeCaret.split(/\s+/);
-    const lastWord = words[words.length - 1];
-    const newText = inputText.replace(lastWord, suggestion);
-    
+    const entireWords = textarea.value.split(/\s+/);
+    if (words[words.length - 1] != entireWords[words.length - 1])
+      return;
+    const lastWord = entireWords[words.length - 1];
+    setPrevWord(lastWord);
+    setAuto(1);
+
+    const newText = inputText.replace(new RegExp(`\\b${lastWord}\\b`), suggestion);
+
     setInputText(newText);
 
-    if (textarea) {
-        const newCaretPos = selectionStartPos - lastWord.length + suggestion.length;
-        textarea.setSelectionRange(newCaretPos, newCaretPos);
-    }
+    const newCaretPos = selectionStart - lastWord.length + suggestion.length;
+    textarea.setSelectionRange(newCaretPos, newCaretPos);
 
     setSuggestions([]);
-    setOriginalWord('');
   };
 
+  const handleInvert = () => {
+      handleSuggestionClick(prevWord);
+  };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if ((e.altKey || e.metaKey || e.ctrlKey) && e.key === '1' && suggestions.length >= 1 && suggestions[0]) {
+      handleSuggestionClick(suggestions[0]);
+    } else if ((e.altKey || e.metaKey || e.ctrlKey) && e.key === '2' && suggestions.length >= 2 && suggestions[1]) {
+      handleSuggestionClick(suggestions[1]);
+    } else if ((e.altKey || e.metaKey || e.ctrlKey) && e.key === '3' && suggestions.length >= 2 && suggestions[2]) {
+      handleSuggestionClick(suggestions[2]);
+    } else if (e.key === ' ' && suggestions.length > 0) {
+      handleSuggestionClick(suggestions[0]);
+    } else if (e.key === 'Backspace') {
+      if (auto == 1 && prevWord) {
+        handleInvert();
+        e.preventDefault();
+        setPrevWord("");
+        setAuto(0);
+      }
+    }
+  };
 
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [suggestions]);
 
   return (
     <div
@@ -167,39 +228,21 @@ const Autocorrect: React.FC = () => {
       }}
     >
       <h 
-        style={{
-          fontSize: '50px',
-          padding: '7px 8px'
-        }}
+        className="header"
       >
-        Hello Gays
+        Autocorrect & Autocomplete
       </h>
       <textarea
+        className="text-area-wrapper"
         ref={textareaRef}
         value={inputText}
         onChange={handleInputChange}
         onClick={handleInputChange}
-        onKeyUp={handleInputChange}
-        style={{ 
-          width: `${currentWidth}px`,
-          height: `${currentHeight}px`,
-          padding: '7px 8px',
-          fontSize: '16px',
-          resize: 'none',
-          transition: '0.5s ease-in-out'
-        }}
+        onKeyUp={handleInputChange} 
         placeholder="Type here..."
       />
       <div 
-        className="suggestion-wrapper"
-        style={{
-          width: `${currentWidth}px`,
-          height: '50px',
-          padding: '7px 8px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
+        className="suggestions-wrapper"
       >
         {suggestions.length > 0 && (
           <div

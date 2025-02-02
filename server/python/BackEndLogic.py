@@ -24,6 +24,9 @@ from typing import List
 from pydantic import BaseModel
 import platform
 
+import MinDist
+import TrieModule
+
 
 # Define a request model for JSON input
 class InputWordRequest(BaseModel):
@@ -40,18 +43,27 @@ int minDistance(char *word1, char *word2)
 
 '''
 
-lib_path = ""
-if platform.system() == "Darwin":
-    lib_path = os.path.join(os.getcwd(), "MinDist.dylib")
-elif platform.system() == "Linux":
-    lib_path = os.path.join(os.getcwd(), "MinDist.so") 
-c_lib = ctypes.CDLL(lib_path)
-c_lib.minDistance.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-c_lib.minDistance.restype = ctypes.c_int
-c_lib.keyboardDist.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-c_lib.keyboardDist.restype = ctypes.c_double
+#lib_path = ""
+#if platform.system() == "Darwin":
+#    lib_path = os.path.join(os.getcwd(), "MinDist.dylib")
+#elif platform.system() == "Linux":
+#    lib_path = os.path.join(os.getcwd(), "MinDist.so") 
+#c_lib = ctypes.CDLL(lib_path)
+#c_lib.minDistance.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+#c_lib.minDistance.restype = ctypes.c_int
+#c_lib.keyboardDist.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+#c_lib.keyboardDist.restype = ctypes.c_double
 
 
+"""
+
+This is the Trie data structure I created in Python. I used this at first, but switched to 
+C++ since I observed it was a lot faster. The python code just ran too slowly and I needed 
+the server to have faster responses, like 0.07 seconds, instead of waiting 0.28 seconds.
+
+"""
+
+"""
 class Trie:
 
     '''
@@ -136,8 +148,9 @@ class Trie:
         # Once every relevant node has been explored, we can return the resulting list
 
         return words
+"""
 
-trie = Trie()
+trie = TrieModule.Trie()
 word_dict = {}
 word_map_first = dict()
 word_map_last = dict()
@@ -152,7 +165,8 @@ for 3 valid words which the input word could be a prefix of.
 
 """
 
-def autocomplete(trie: Trie, input_word: str):
+def autocomplete(input_word: str):
+    global trie
     suggestions = trie.search(input_word)
     # Sort by length first, then alphabetically
     suggestions.sort(key=lambda x: (len(x), x))
@@ -196,18 +210,23 @@ def autocorrect(words, input_word: str):
 
     res = []
 
-    for word in words:
-        edit_score = c_lib.minDistance(input_word.encode('utf-8'), word.encode('utf-8'))
-        kb_score = c_lib.keyboardDist(input_word.encode('utf-8'), word.encode('utf-8'))
+    """ The code written in python below is now done in cpp """
+
+    """for word in words:
+        edit_score = MinDist.minDistance(input_word, word);
+        kb_score = MinDist.keyboardDist(input_word, word);
                 
         # Add word to results
-        res.append((word, edit_score, kb_score))
+        res.append((word, edit_score, kb_score))"""
+
+    res = MinDist.compareWords(input_word, words)
 
     # Sort by edit distance, then keyboard distance
     res.sort(key=lambda x: (x[1], x[2]))
 
     # Take the top 3 results 
     res = res[:3]
+    print(res)
 
     # Check if the smallest edit score is too large 
     if res and res[0][1] > 5.0:
@@ -282,14 +301,6 @@ async def initialize_words(word_file="words.txt"):
                 words = [line.strip() for line in file]
     except FileNotFoundError:
         await do_responses()
-
-
-
-
-
-
-
-
 
 
 
@@ -395,8 +406,6 @@ def autocorrect_and_autocomplete_req(request: InputWordRequest) -> SuggestionRes
     #print(f"Received Word: {input_word}")
     num_responses_done = len(responses)
     shorter_words = []
-    lower_bound = word_map_first.get(len(input_word), 0)
-    upper_bound = word_map_last.get(len(input_word) + 4, 0)
     output = []
     
     if input_word in words and len(input_word) < 44:
@@ -404,13 +413,15 @@ def autocorrect_and_autocomplete_req(request: InputWordRequest) -> SuggestionRes
         # This occurs when the word is spelled correctly and we need to
         # suggests ways to complete potentially unfinished text.
 
-        output = autocomplete(trie, input_word)
+        output = autocomplete(input_word)
     elif len(input_word) < 44:
         
-        shorter_words = words[lower_bound:upper_bound + 1]
-        output = autocomplete(trie, input_word)
+        output = autocomplete(input_word)
 
         if not output:
+            lower_bound = word_map_first.get(len(input_word), 0)
+            upper_bound = word_map_last.get(len(input_word) + 4, 0)
+            shorter_words = words[lower_bound:upper_bound + 1]
             corrected_suggestions = autocorrect(shorter_words, input_word)
             output = corrected_suggestions
     else:
@@ -444,8 +455,6 @@ def autocorrect_and_autocomplete_req_test(input_word: str) -> List[str]:
     #print(f"Received Word: {input_word}")
     num_responses_done = len(responses)
     shorter_words = []
-    lower_bound = word_map_first.get(len(input_word), 0)
-    upper_bound = word_map_last.get(len(input_word) + 4, 0)
     output = []
     
     if input_word in words and len(input_word) < 44:
@@ -453,13 +462,15 @@ def autocorrect_and_autocomplete_req_test(input_word: str) -> List[str]:
         # This occurs when the word is spelled correctly and we need to
         # suggests ways to complete potentially unfinished text.
 
-        output = autocomplete(trie, input_word)
+        output = autocomplete(input_word)
     elif len(input_word) < 44:
         
-        shorter_words = words[lower_bound:upper_bound + 1]
-        output = autocomplete(trie, input_word)
+        output = autocomplete(input_word)
 
         if not output:
+            lower_bound = word_map_first.get(len(input_word), 0)
+            upper_bound = word_map_last.get(len(input_word) + 4, 0)
+            shorter_words = words[lower_bound:upper_bound + 1]
             corrected_suggestions = autocorrect(shorter_words, input_word)
             output = corrected_suggestions
     else:
@@ -491,6 +502,17 @@ async def initialize_data_test():
     for i in range(len(all_letters)):
         for j in range(1, req_upper_bounds[i]):
             responses.append('https://www.merriam-webster.com/browse/thesaurus/' + str(all_letters[i]) + '/' + str(j))
+
+    #req_upper_bounds = [30, 32, 46, 26, 18, 22, 18, 22, 17, 5, 7, 18, 27, 12, 14, 40, 4, 21, 54, 27, 10, 8, 15, 2, 3, 3]
+    #
+    #for i in range(len(req_upper_bounds)):
+    #    for j in range(1, req_upper_bounds[i]):
+    #        responses.append('https://www.dictionary.com/list/' + str(all_letters[i])) if j == 1 else responses.append('https://www.dictionary.com/list/' + str(all_letters[i]) + '/' + str(j))
+    responses.append('https://www.knowyourproduce.com/fruits-and-vegetables-a-z/')
+    responses.append('https://www.vegetables.co.nz/vegetable-a-z/vegetables-a-z/')
+    responses.append('https://simple.wikipedia.org/wiki/List_of_fruits')
+    responses.append('https://simple.wikipedia.org/wiki/List_of_vegetables')
+    responses.append('https://www.boldtuesday.com/pages/alphabetical-list-of-all-countries-and-capitals-shown-on-list-of-countries-poster?srsltid=AfmBOoqRuzPIeHdHqZWc7jQT7gBKHTtr9ncYJpDAVCr_Us8aKl47Ca3e')
 
     def process_words(text, unique_words):
         """Process the words in the response and add unique words to the set."""
@@ -544,15 +566,22 @@ async def initialize_data_test():
             word_map_last[f_len] = i
             f_len = len(curr_word)
             word_map_first[f_len] = i
+    pass
 
 
 
 
 # testing purposes only
 
-# asyncio.run(initialize_data_test())
 
-# print(len(words))
-# input_word = input("Enter word: ")
+asyncio.run(initialize_data_test())
 
-# print(autocorrect_and_autocomplete_req_test(input_word))
+
+print(len(words))
+input_word = input("Enter word: ")
+
+start = time.time()
+print(autocorrect_and_autocomplete_req_test(input_word))
+end = time.time()
+dur = end - start
+print("Time it took: ", dur)

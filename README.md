@@ -99,7 +99,7 @@ yields an actual result, then we do NOT call the autocorrect subroutine. However
 lookup yields an empty result, it means that we need to check if the input word can be 
 autocorrected. There is a cap for the edit distance calculation. If 5 changes had to be 
 made at minimum, we do not display any results (this may change with further testing). If 
-the word already exists in the database, we do not display results (done in the Front-End).
+the word already exists in the database, we do not display results (done on the Front-End).
 
 ## Final Notes
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thank you for reading my documentation on this research 

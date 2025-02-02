@@ -5,12 +5,14 @@
 I started off with a simple python script, where I took in a word as input. The program, before
 taking input, would read a massive file of words that represented the entire data set
 of words the program would work with, exploiting the Trie data structure to instantly
-provide the top 3 recommendations to "complete" the word. \
+provide the top 3 recommendations to "complete" the word. 
+
 However, I was not satisfied with just autocompleting words and I realized 
 my "database" of words was very limited and, sometimes, incorrect (random words were present 
 that no sane human would use in real life, like appled). I migrated from using a file of words 
 I found from the internet to BeautifulSoup webscraping and started working on a way to implement
-autocorrections. \
+autocorrections. 
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Even though the project itself is not exciting or unique, I learned many things from expanding 
 the project from a simple input output python program to optimizing it by writing the code 
 in a lower-level language and developing a full-stack application that exploits API calls 
@@ -23,12 +25,14 @@ autocompletions in real time.
 about ways to develop a more secure program while making sure not to sacrifice performance.
 I am not confident in my application's security, but for future projects, I hope to 
 be more mindful during development. I tried to maintain some level of security by preventing 
-obvious DDoS attacks, limiting the number of requests per user. \
+obvious DDoS attacks, limiting the number of requests per user. 
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I just want it to be known that this application was mostly fueled by my curiosity of 
 how autocorrections and autocompletions could be handled in a real world setting. Instead of a 
 project, you can say it is more like a "research" application. A couple of algorithms I 
 used for this project, such as the Levenshtein Edit Distance algorithm, were not developed 
-by me, so it is unfair to call this a project from my perspective.\
+by me, so it is unfair to call this a project from my perspective.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;From the Front-End perspective, I learned a few things about React + Vite. However, I thought 
 the differences between React TSX and React JSX ranged from slim to none. I like TypeScript, 
 but I did not see major differences. You can let me know if I am wrong.
@@ -51,7 +55,7 @@ output is "queen, siren" for the top two recommendations. My program opted for o
 instead, like "pure". I started to note the pattern where, on a phone, we tend to "mistype" 
 incorrect letters, and the incorrect letters tend to be adjacent or close to the letters we 
 wanted to actually type for the correct word we were thinking of. Thus, I thought of a pretty 
-terrible solution, but it got the job done. \ 
+terrible solution, but it got the job done. 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I made a 2D array documenting the common letters and symbols that
 we use in a regular English keyboard and, whenever the Edit Distance Algorithm was called, I also 
@@ -60,7 +64,8 @@ penalty if the words were of different length. I simply calculated the Euclidean
 each bi-letter comparison in linear time and added up all of the results, representing how 
 close the letters are in proximity on a US keyboard given the input word and any word on the 
 database (the database is limited to words of length [length(input_word) - 2, 
-length(input_word) + 4] whenever a lookup is done). \
+length(input_word) + 4] whenever a lookup is done).
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This solution has obvious drawbacks. I do not like the 
 solution of making a 2D array in C++. I might look in to finding a better way to figuring 
 out where a specific key's "coordinate value" is on the US keyboard. There is no point in 

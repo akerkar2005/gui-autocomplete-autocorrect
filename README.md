@@ -1,34 +1,37 @@
 # Personal Autocorrect & Autocomplete Program
 
 ## Beginnings Of This Project
-This project was originally made to experiment with the Trie data structure,
-where a simple python script was run, taking in a word as input. The program, before
+This project was originally made to experiment with the Trie data structure and learning python.
+I started off with a simple python script, where I took in a word as input. The program, before
 taking input, would read a massive file of words that represented the entire data set
 of words the program would work with, exploiting the Trie data structure to instantly
-provide the top 3 recommendations to "complete" the word. \
-However, I was not satisfied with just autocompleting words. Additionally, I realized 
-my "database" of words was very limited. I migrated from using a file I found from the 
-internet to BeautifulSoup webscraping and started working on a way to implement
-autocorrections. Even though the project itself is not exciting or unique, I learned
-many things from expanding the project from a simple input output python program to 
-optimizing it by writing the code in lower-level languages and developing a full-stack
-application that exploits API calls to deliver a robust application. 
+provide the top 3 recommendations to "complete" the word. \\
+However, I was not satisfied with just autocompleting words and I realized 
+my "database" of words was very limited and, sometimes, incorrect (random words were present 
+that no sane human would use in real life, like appled). I migrated from using a file of words 
+I found from the internet to BeautifulSoup webscraping and started working on a way to implement
+autocorrections. \\
+Even though the project itself is not exciting or unique, I learned many things from expanding 
+the project from a simple input output python program to optimizing it by writing the code 
+in a lower-level language and developing a full-stack application that exploits API calls 
+to deliver a robust application, taking in live input and providing autocorrections and 
+autocompletions in real time. 
 
 
 ## Miscellaneous Notes
-I am still new to Full-Stack Development, so I would appreciate it if I could learn more 
-about ways to develop a more secure program while making sure to not sacrifice performance.
-I am not very confident in my application's security, but for future projects, I hope to 
+I am still new to Full-Stack Development, so I am still learning more 
+about ways to develop a more secure program while making sure not to sacrifice performance.
+I am not confident in my application's security, but for future projects, I hope to 
 be more mindful during development. I tried to maintain some level of security by preventing 
-obvious DDoS attacks, limiting the number of requests per user who connects to the server. \
-I just want it to be known that this application was fueled by my curiosity of 
-how autocorrections and autocompletions could be handled in the real world. Instead of a 
-project, one can regard this as more of a "research". Clearly a lot of the algorithms I 
+obvious DDoS attacks, limiting the number of requests per user. \
+I just want it to be known that this application was mostly fueled by my curiosity of 
+how autocorrections and autocompletions could be handled in a real world setting. Instead of a 
+project, you can say it is more like a "research" application. A couple of algorithms I 
 used for this project, such as the Levenshtein Edit Distance algorithm, were not developed 
-by me, so it is unfair to call this a project from my perspective. I learned a few things about 
-Front-End Development with React + Vite as well. I will say, however, the differences between 
-React TSX and React JSX ranges from slim to none. I like TypeScript as well to a certain extent, 
-but I did not see major differences.
+by me, so it is unfair to call this a project from my perspective.\\ 
+From the Front-End perspective, I learned a few things about React + Vite. However, I thought 
+the differences between React TSX and React JSX ranged from slim to none. I like TypeScript, 
+but I did not see major differences. You can let me know if I am wrong.
 
 ## Autocorrect Notes
 Autocorrect was the most frustrating part about this project. While it is easy to find the 

@@ -205,7 +205,7 @@ const Autocorrect: React.FC = () => {
     } else if (e.key === 'Backspace') {
       if (auto == 1 && prevWord) {
         handleInvert();
-        e.preventDefault();
+        //e.preventDefault();
         setPrevWord("");
         setAuto(0);
       }

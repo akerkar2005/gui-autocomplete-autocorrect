@@ -4,6 +4,11 @@ import cors from 'cors';
 import { spawn, ChildProcess } from 'child_process';
 import path from 'path';
 import Piscina from 'piscina';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const workerPool = new Piscina({
   filename: path.resolve(__dirname, 'pythonWorker.js'),

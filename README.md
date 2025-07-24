@@ -6,9 +6,16 @@ to run it locally as long as you have conda and node package manager. I recommen
 since it's lightweight and that is what I used, but as long as you have an environment, you should be good.
 ### Backend
 Set up a Python environment with Python version 3.12. For conda, this would be 
-`conda create -n autocorrectpy312 python=3.12`. After creating the python environment, you can 
-change directories into the server and do `conda install --file requirements.txt` and it should 
-download the required packages automatically. 
+```
+conda create -n autocorrectpy312 python=3.12
+```
+After creating the python environment, you can change directories into the server and do 
+```
+conda install --file requirements.txt
+```
+and it should download the required packages automatically. If something goes wrong within the python directory 
+where the custom python modules aren't being found, try cd'ing into the python directory and run 
+`pip install .`, which will run setup.py. It should run with no issues.
 ### Frontend
 This should be simple if you have node package manager. If you don't, follow these steps
 `https://nodejs.org/en/download`. 

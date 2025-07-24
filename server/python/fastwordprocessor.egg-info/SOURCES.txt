@@ -1,0 +1,8 @@
+setup.py
+bindings/MinDist.cpp
+bindings/TrieModule.cpp
+fastwordprocessor.egg-info/PKG-INFO
+fastwordprocessor.egg-info/SOURCES.txt
+fastwordprocessor.egg-info/dependency_links.txt
+fastwordprocessor.egg-info/not-zip-safe
+fastwordprocessor.egg-info/top_level.txt

@@ -38,7 +38,7 @@ class WordProcessor:
 
         req_upper_bounds = [40, 48, 77, 52, 31, 35, 28, 31, 33, 8, 9, 25, 37, 17, 18, 56, 5, 47, 88, 37, 23, 11, 22, 1, 4, 3, 1]
         all_letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0']
-             
+
         for i in range(len(all_letters)):
             for j in range(1, req_upper_bounds[i]):
                 urls.append('https://www.merriam-webster.com/browse/thesaurus/' + str(all_letters[i]) + '/' + str(j))

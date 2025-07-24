@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: fastwordprocessor
+Version: 0.1.0
+Summary: Fast Trie and MinDist Python bindings using pybind11
+Author: Atharva Kerkar
+Dynamic: author
+Dynamic: summary

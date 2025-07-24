@@ -1,3 +1,10 @@
+/*
+ * In a production setting, the following code would
+ * be the worker we use to handle requests. This is
+ * an Express server backend with rate-limiting and CORS
+ * options.
+ */
+
 import express, { Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
@@ -12,8 +19,8 @@ const __dirname = dirname(__filename);
 
 const workerPool = new Piscina({
   filename: path.resolve(__dirname, 'pythonWorker.js'),
-  minThreads: 2,  // Minimum Python processes
-  maxThreads: 4,  // Maximum Python processes
+  minThreads: 2,
+  maxThreads: 4,
 });
 
 
@@ -21,7 +28,6 @@ const workerPool = new Piscina({
 // Express app setup
 const app = express();
 const port = process.env.PORT || 3000;
-
 
 const allowedOrigins = ['http://localhost:5173', 'http://100.80.0.51:5173'];
 
@@ -39,17 +45,8 @@ const corsOptions = {
 };
 
 
-
-
-
 // Middleware
 app.use(express.json());
-//app.use(cors({
-//  origin: 'http://100.80.0.51:5173', // Adjust this to match your frontend URL
-//  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//  allowedHeaders: 'Content-Type,Authorization',
-//  credentials: true, // Set to true if cookies or credentials are involved
-//}));
 app.use(cors(corsOptions));
 
 // Initialize rate limiter
@@ -59,8 +56,8 @@ const limiter = rateLimit({
   message: {
     error: 'Too many requests, please try again later.',
   },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // Python process management
@@ -132,7 +129,7 @@ function processNextInQueue() {
     return;
   }
 
-  const currentRequest = requestQueue[0]; 
+  const currentRequest = requestQueue[0];
   isProcessing = true;
 
   const input = JSON.stringify({ word: currentRequest.word }) + '\n';
@@ -151,8 +148,8 @@ function processNextInQueue() {
       currentRequest.reject(err);
     } finally {
       isProcessing = false;
-      requestQueue.shift(); 
-      processNextInQueue(); 
+      requestQueue.shift();
+      processNextInQueue();
 
       pythonProcess.stdout?.off('data', onData);
     }
@@ -214,4 +211,3 @@ startServer().catch(error => {
 });
 
 export default app;
-

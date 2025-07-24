@@ -215,7 +215,7 @@ def autocorrect(words, input_word: str):
     """for word in words:
         edit_score = MinDist.minDistance(input_word, word);
         kb_score = MinDist.keyboardDist(input_word, word);
-                
+
         # Add word to results
         res.append((word, edit_score, kb_score))"""
 
@@ -344,12 +344,12 @@ async def lifespan(app: FastAPI):
 
     # The server runs
 
-    yield 
-    
-    # What happens on shutdown 
+    yield
+
+    # What happens on shutdown
 
     words = sorted(words, key=lambda word: (word[0], len(word)))
-    
+
     with open("words.txt", "w") as f:
         f.write(f"{len(responses)}\n")
         for word in words:
@@ -407,7 +407,7 @@ def autocorrect_and_autocomplete_req(request: InputWordRequest) -> SuggestionRes
     num_responses_done = len(responses)
     shorter_words = []
     output = []
-    
+
     if input_word in words and len(input_word) < 44:
 
         # This occurs when the word is spelled correctly and we need to
@@ -415,7 +415,7 @@ def autocorrect_and_autocomplete_req(request: InputWordRequest) -> SuggestionRes
 
         output = autocomplete(input_word)
     elif len(input_word) < 44:
-        
+
         output = autocomplete(input_word)
 
         if not output:
@@ -498,7 +498,7 @@ async def initialize_data_test():
 
     req_upper_bounds = [40, 48, 77, 52, 31, 35, 28, 31, 33, 8, 9, 25, 37, 17, 18, 56, 5, 47, 88, 37, 23, 11, 22, 1, 4, 3, 1]
     all_letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0']
-        
+
     for i in range(len(all_letters)):
         for j in range(1, req_upper_bounds[i]):
             responses.append('https://www.merriam-webster.com/browse/thesaurus/' + str(all_letters[i]) + '/' + str(j))

@@ -1,28 +1,46 @@
 # Personal Autocorrect & Autocomplete Program
 
-## Beginnings Of Autocorrect & Autocomplete
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project was originally made to experiment with the Trie data structure and to learn python.
-I started off with a simple python script, where I took in a word as input. The program, before
-taking input, would read a massive file of words that represented the entire data set
-of words the program would work with, exploiting the Trie data structure to instantly
-provide the top 3 recommendations to "complete" the word. 
+## How To Run Locally
+I am not hosting this project because I don't see the point in doing so, but I did make it easy 
+to run it locally as long as you have conda and node package manager. I recommend micromamba 
+since it's lightweight and that is what I used, but as long as you have an environment, you should be good.
+### Backend
+Set up a Python environment with Python version 3.12. For conda, this would be 
+`conda create -n autocorrectpy312 python=3.12`. After creating the python environment, you can 
+change directories into the server and do `conda install --file requirements.txt` and it should 
+download the required packages automatically. 
+### Frontend
+This should be simple if you have node package manager. If you don't, follow these steps
+`https://nodejs.org/en/download`. 
+Once you have the node package manager, downloading the packages required for the frontend will 
+be a simple `npm install`. This should download everything you will need (don't worry it's not a lot).
+### Launch the App
+Once you are done setting up frontend and backend, to launch the app, go to the client directory and 
+run the bash command `run_application.sh` to run the frontend and backend concurrently. This will 
+launch the app
 
-However, I was not satisfied with just autocompleting words and I realized 
+## Beginnings Of Autocorrect & Autocomplete
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project was originally made to experiment with the Trie data structure and to learn python. 
+I started off with a simple python script, where I took in a word as input. The program, before 
+taking input, would read a massive file of words that represented the entire data set 
+of words the program would work with, exploiting the Trie data structure to instantly 
+provide the top 3 recommendations to "complete" the word.
+
+ However, I was not satisfied with just autocompleting words and I realized 
 my "database" of words was very limited and, sometimes, incorrect (random words were present 
 that no sane human would use in real life, like appled). I migrated from using a file of words 
-I found from the internet to BeautifulSoup webscraping and started working on a way to implement
-autocorrections. 
+I found from the internet to BeautifulSoup webscraping and started working on a way to implement 
+autocorrections.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Even though the project itself is not exciting or unique, I learned many things from expanding 
 the project from a simple input output python program to optimizing it by writing the code 
 in a lower-level language and developing a full-stack application that exploits API calls 
 to deliver a robust application, taking in live input and providing autocorrections and 
-autocompletions in real time. 
-
+autocompletions in real time.
 
 ## Miscellaneous Notes
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I am still new to Full-Stack Development, so I am still learning more 
-about ways to develop a more secure program while making sure not to sacrifice performance.
+about ways to develop a more secure program while making sure not to sacrifice performance. 
 I am not confident in my application's security, but for future projects, I hope to 
 be more mindful during development. I tried to maintain some level of security by preventing 
 obvious DDoS attacks, limiting the number of requests per user. 
@@ -35,13 +53,13 @@ by me, so it is unfair to call this a project from my perspective.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;From the Front-End perspective, I learned a few things about React + Vite. However, I thought 
 the differences between React TSX and React JSX ranged from slim to none. I like TypeScript, 
-but I did not see major differences. You can let me know if I am wrong.
+but I did not see major differences from a bird's eye POV. You can let me know if I am wrong.
 
 ## Autocorrect Notes
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Autocorrect was the most frustrating part about this project. While it is easy to find the 
-minimum distance between any two words via the Levenshtein Edit Distance Dynamic Programming
+minimum distance between any two words via the Levenshtein Edit Distance Dynamic Programming 
 algorithm, the problem arises when we are literally trying to read the user's mind and figure 
-out, by brute force and comparing every possible word in our database, what possible word 
+out via brute force, comparing every possible word in our database, what possible word 
 they may be misspelling. I realized I needed more than just the Levenshtein Edit Distance 
 Algorithm to figure out how to find out what the user may be mispelling. I thought of two 
 major ideas:
@@ -91,7 +109,7 @@ Structure in C++ to make the lookups faster, and imported the Dynamic Library in
 Python processor program. Other than that, there were no real issues developing this part of 
 the project. If only autocorrect were this simple...
 
-## Autocorrect & Autocomplete Notes 
+## Autocorrect & Autocomplete Notes
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now that we established what was done for each part of this 
 project, how exactly were they implemented to work with each other? Autocomplete is always given 
 precedence. Yes, "appl" is a mispelling, but the user wasn't done typing! If a Trie lookup 
@@ -105,4 +123,4 @@ the word already exists in the database, we do not display results (done on the 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thank you for reading my documentation on this research 
 application! While the final product is not that interesting, I believed the journey to be 
 better than the destination. Tries are just way too cool for me to NOT implement them, and 
-the Edit Distance algorithm is also incredible in my opinion.
+the Edit Distance algorithm is also quite incredible.

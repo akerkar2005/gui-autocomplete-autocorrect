@@ -3,7 +3,8 @@
 # exit on any error
 set -e
 
-cd "$(dirname "$(realpath $0)")"
+ROOT="$(dirname "$(realpath $0)")"
+cd "$ROOT"
 pwd
 
 # client setup
@@ -12,11 +13,12 @@ npm install
 
 # server setup
 cd ../server
-conda create -n autocorrectenv -f environment.yml
-conda activate autocorrectenv
+conda env create --file environment.yml
 npm install
-cd python
-pip install .
-cd ../..
 
+echo
+echo
 echo "done!"
+echo "run: conda activate autocorrectenv"
+echo "cd into $ROOT/server/python and run: pip install ."
+echo "After that, go back to $ROOT and run setup_application.sh :)"

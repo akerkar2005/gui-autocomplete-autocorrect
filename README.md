@@ -7,14 +7,19 @@ since it's lightweight and that is what I used, but as long as you have an envir
 This should also be simple if you have node package manager. If you don't, follow these steps
 `https://nodejs.org/en/download`.
 
+### Setup script
+I made a setup script that does everything written in Backend and Frontend sections of this README file. 
+If you want, you can try running it but I won't guarantee that it will work. Don't forget to follow the 
+instructions at the end (I can't automate activating the conda environment within a subshell without running 
+conda init which is overkill; just do the last step yourself hehe).
+
 ### Backend
 Set up a Python environment with Python version 3.12. For conda, you can go to the server directory 
-and make an env with the environment.yaml file:
+and make an env with the environment.yml file:
 ```
-conda create -n autocorrectenv -f environment.yml
+conda env create --file environment.yml
 ```
-and it should download the required packages automatically. If something goes wrong within the Python directory 
-where the custom python modules aren't being found, try cd'ing into the server/python directory and run 
+and it should download the required packages automatically. You must cd into the server/python directory and run 
 `pip install .`, which will run setup.py. It is possible pybind11 didn't install. Do that with conda:
 ```
 conda install -c conda-forge pybind11

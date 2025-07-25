@@ -4,28 +4,37 @@
 I am not hosting this project because I don't see the point in doing so, but I did make it easy 
 to run it locally as long as you have conda and node package manager. I recommend micromamba 
 since it's lightweight and that is what I used, but as long as you have an environment, you should be good.
+This should also be simple if you have node package manager. If you don't, follow these steps
+`https://nodejs.org/en/download`.
+
 ### Backend
-Set up a Python environment with Python version 3.12. For conda, this would be 
+Set up a Python environment with Python version 3.12. For conda, you can go to the server directory 
+and make an env with the environment.yaml file:
 ```
-conda create -n autocorrectpy312 python=3.12
-```
-After creating the python environment, you can change directories into the server directory and do 
-```
-conda install --file requirements.txt
+conda create -n autocorrectenv -f environment.yml
 ```
 and it should download the required packages automatically. If something goes wrong within the Python directory 
 where the custom python modules aren't being found, try cd'ing into the server/python directory and run 
-`pip install .`, which will run setup.py. It should run with no issues since I already created the modules.
+`pip install .`, which will run setup.py. It is possible pybind11 didn't install. Do that with conda:
+```
+conda install -c conda-forge pybind11
+```
+After running this, you can do `pip install .` on the `server/python` directory and it should work.
+Since I am using an Express framework, do not forget to
+```
+npm install
+```
+while on the server directory to install the required packages.
 ### Frontend
-This should be simple if you have node package manager. If you don't, follow these steps
-`https://nodejs.org/en/download`. 
-Once you have the node package manager, downloading the packages required for the frontend will 
-be a simple `npm install` in the frontend. This should download everything you will need (don't worry, 
+```
+npm install
+```
+in the frontend directory. This should download everything you will need (don't worry, 
 it's not a lot).
 ### Launch the App
 Once you are done setting up frontend and backend, to launch the app, go to the client directory and 
-run the bash command `run_application.sh` to run the frontend and backend concurrently. This will 
-launch the app and you can play around with it..
+run the bash command `run_application.sh` (after giving it executable permissions) to run the frontend 
+and backend concurrently. This will launch the app locally.
 
 ## Beginnings Of Autocorrect & Autocomplete
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This project was originally made to experiment with the Trie data structure and to learn python. 

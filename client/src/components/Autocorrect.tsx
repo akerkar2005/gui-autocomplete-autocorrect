@@ -12,7 +12,7 @@ const Autocorrect: React.FC = () => {
   const [prevWord, setPrevWord] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const API_BASE_URL = 'http://100.80.0.51:3000';
+  const API_BASE_URL = 'http://localhost:3000';
 
 
   const MAX_SUGGESTIONS = 3; // Maximum number of suggestions

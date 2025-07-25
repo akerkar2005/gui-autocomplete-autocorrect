@@ -14,6 +14,12 @@ instructions at the end (I can't automate activating the conda environment withi
 conda init which is overkill; just do the last step yourself hehe).
 
 ### Backend
+Since I am using an Express framework
+```
+npm install
+```
+while on the server directory to install the required packages.
+
 Set up a Python environment with Python version 3.12. For conda, you can go to the server directory 
 and make an env with the environment.yml file:
 ```
@@ -24,12 +30,8 @@ and it should download the required packages automatically. You must cd into the
 ```
 conda install -c conda-forge pybind11
 ```
-After running this, you can do `pip install .` on the `server/python` directory and it should work.
-Since I am using an Express framework, do not forget to
-```
-npm install
-```
-while on the server directory to install the required packages.
+After running this, you can do `pip install .` on the `server/python` directory and you finished setting up 
+the server locally.
 ### Frontend
 ```
 npm install

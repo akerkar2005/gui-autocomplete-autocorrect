@@ -18,7 +18,8 @@ npm install
 
 echo
 echo
-echo "done!"
+echo "INSTRUCTIONS"
+echo "==================="
 echo "run: conda activate autocorrectenv"
 echo "cd into $ROOT/server/python and run: pip install ."
-echo "After that, go back to $ROOT and run setup_application.sh :)"
+echo "After that, go back to $ROOT and run run_application.sh :)"
